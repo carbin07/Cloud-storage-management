@@ -43,7 +43,7 @@ export const uploadFile = async ({
     };
 
     const newFile = await databases
-      .createDocument(
+      .createRow(
         appwriteConfig.databaseId,
         appwriteConfig.filesCollectionId,
         ID.unique(),
@@ -105,7 +105,7 @@ export const getFiles = async ({
 
     const queries = createQueries(currentUser, types, searchText, sort, limit);
 
-    const files = await databases.listDocuments(
+    const files = await databases.listRows(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
       queries,
@@ -128,7 +128,7 @@ export const renameFile = async ({
 
   try {
     const newName = `${name}.${extension}`;
-    const updatedFile = await databases.updateDocument(
+    const updatedFile = await databases.updateRow(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
       fileId,
@@ -152,7 +152,7 @@ export const updateFileUsers = async ({
   const { databases } = await createAdminClient();
 
   try {
-    const updatedFile = await databases.updateDocument(
+    const updatedFile = await databases.updateRow(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
       fileId,
@@ -176,7 +176,7 @@ export const deleteFile = async ({
   const { databases, storage } = await createAdminClient();
 
   try {
-    const deletedFile = await databases.deleteDocument(
+    const deletedFile = await databases.deleteRow(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
       fileId,
@@ -200,7 +200,7 @@ export async function getTotalSpaceUsed() {
     const currentUser = await getCurrentUser();
     if (!currentUser) throw new Error("User is not authenticated.");
 
-    const files = await databases.listDocuments(
+    const files = await databases.listRows(
       appwriteConfig.databaseId,
       appwriteConfig.filesCollectionId,
       [Query.equal("owner", [currentUser.$id])],
@@ -216,7 +216,7 @@ export async function getTotalSpaceUsed() {
       all: 2 * 1024 * 1024 * 1024 /* 2GB available bucket storage */,
     };
 
-    files.documents.forEach((file) => {
+    files.rows.forEach((file) => {
       const fileType = file.type as FileType;
       totalSpace[fileType].size += file.size;
       totalSpace.used += file.size;

@@ -29,7 +29,7 @@ const Search = () => {
       }
 
       const files = await getFiles({ types: [], searchText: debouncedQuery });
-      setResults(files.documents);
+      setResults(files.rows);
       setOpen(true);
     };
 

@@ -11,13 +11,13 @@ import { redirect } from "next/navigation";
 const getUserByEmail = async (email: string) => {
   const { databases } = await createAdminClient();
 
-  const result = await databases.listDocuments(
+  const result = await databases.listRows(
     appwriteConfig.databaseId,
     appwriteConfig.usersCollectionId,
     [Query.equal("email", [email])],
   );
 
-  return result.total > 0 ? result.documents[0] : null;
+  return result.total > 0 ? result.rows[0] : null;
 };
 
 const handleError = (error: unknown, message: string) => {
@@ -52,7 +52,7 @@ export const createAccount = async ({
   if (!existingUser) {
     const { databases } = await createAdminClient();
 
-    await databases.createDocument(
+    await databases.createRow(
       appwriteConfig.databaseId,
       appwriteConfig.usersCollectionId,
       ID.unique(),
@@ -99,7 +99,7 @@ export const getCurrentUser = async () => {
 
     const result = await account.get();
 
-    const user = await databases.listDocuments(
+    const user = await databases.listRows(
       appwriteConfig.databaseId,
       appwriteConfig.usersCollectionId,
       [Query.equal("accountId", result.$id)],
@@ -107,7 +107,7 @@ export const getCurrentUser = async () => {
 
     if (user.total <= 0) return null;
 
-    return parseStringify(user.documents[0]);
+    return parseStringify(user.rows[0]);
   } catch (error) {
     console.log(error);
   }
